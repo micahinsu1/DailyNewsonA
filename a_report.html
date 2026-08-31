@@ -1489,7 +1489,8 @@
 
             if (!selectedDate) return;
 
-            const archiveFile = `archive/a_report_${selectedDate}.html`;
+            const formattedDate = selectedDate.replace(/-/g, '');
+            const archiveFile = `archive/a_report_${formattedDate}.html`;
             window.open(archiveFile, '_blank');
         }
 
