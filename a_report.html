@@ -573,6 +573,14 @@
                 </div>
             </div>
 
+            <!-- Date Selector -->
+            <div style="background: #f0f6ff; border: 1px solid #2d7dd6; border-radius: 6px; padding: 15px; margin-bottom: 15px;">
+                <div style="font-size: 12px; font-weight: 600; color: #333; margin-bottom: 8px;">📅 과거 리포트 보기</div>
+                <select id="dateSelector" style="padding: 8px 12px; border: 1px solid #2d7dd6; border-radius: 4px; font-size: 12px; cursor: pointer;" onchange="loadArchivedReport()">
+                    <option value="">-- 날짜 선택 --</option>
+                </select>
+            </div>
+
             <!-- Section 1: Executive Summary - Last 7 Days -->
             <div class="section">
                 <div class="section-title">
