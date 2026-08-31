@@ -51,6 +51,25 @@
             transform: scale(0.98);
         }
 
+        .date-selector {
+            background: white;
+            color: #333;
+            border: 1px solid #2d7dd6;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(45, 125, 214, 0.2);
+            margin-left: 10px;
+        }
+
+        .date-selector:hover {
+            background: #f5f9ff;
+            box-shadow: 0 4px 12px rgba(45, 125, 214, 0.3);
+        }
+
         .update-status {
             position: fixed;
             top: 60px;
@@ -535,6 +554,9 @@
 <body>
     <div class="top-bar">
         <button class="export-btn" onclick="exportToPDF()">Export PDF</button>
+        <select id="dateSelector" class="date-selector" onchange="loadArchivedReport()" title="과거 리포트 보기">
+            <option value="">📅 과거 리포트</option>
+        </select>
         <div class="update-status" id="updateStatus"></div>
     </div>
 
@@ -547,14 +569,6 @@
                     <span>일일 뉴스 리포트</span>
                     <span id="reportDate">2026년 8월 31일 (일요일)</span>
                 </div>
-            </div>
-
-            <!-- Date Selector -->
-            <div style="background: #f0f6ff; border: 1px solid #2d7dd6; border-radius: 6px; padding: 15px; margin-bottom: 15px;">
-                <div style="font-size: 12px; font-weight: 600; color: #333; margin-bottom: 8px;">📅 과거 리포트 보기</div>
-                <select id="dateSelector" style="padding: 8px 12px; border: 1px solid #2d7dd6; border-radius: 4px; font-size: 12px; cursor: pointer;" onchange="loadArchivedReport()">
-                    <option value="">-- 날짜 선택 --</option>
-                </select>
             </div>
 
             <!-- Section 1: Executive Summary - Last 7 Days -->
@@ -1470,10 +1484,20 @@
                 const archiveData = await response.json();
                 const selector = document.getElementById('dateSelector');
 
-                archiveData.dates.forEach(date => {
+                archiveData.dates.forEach(dateTime => {
                     const option = document.createElement('option');
-                    option.value = date;
-                    option.textContent = date + ' (보관본)';
+                    option.value = dateTime;
+
+                    // Format: "2026-08-31-6am" → "2026-08-31 (6am KST)"
+                    const lastDashIndex = dateTime.lastIndexOf('-');
+                    if (lastDashIndex > 0) {
+                        const date = dateTime.substring(0, lastDashIndex);
+                        const time = dateTime.substring(lastDashIndex + 1);
+                        option.textContent = `${date} (${time} KST)`;
+                    } else {
+                        option.textContent = dateTime;
+                    }
+
                     selector.appendChild(option);
                 });
             } catch (error) {
@@ -1488,8 +1512,11 @@
 
             if (!selectedDate) return;
 
-            const formattedDate = selectedDate.replace(/-/g, '');
-            const archiveFile = `archive/a_report_${formattedDate}.html`;
+            // Format: "2026-08-31-6am" → "archive/a_report_20260831_6am.html"
+            const lastDashIndex = selectedDate.lastIndexOf('-');
+            const date = selectedDate.substring(0, lastDashIndex).replace(/-/g, '');
+            const time = selectedDate.substring(lastDashIndex + 1);
+            const archiveFile = `archive/a_report_${date}_${time}.html`;
             window.open(archiveFile, '_blank');
         }
 
