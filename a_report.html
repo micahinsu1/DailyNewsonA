@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apple Card 뉴스 리포트</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <title>Apple Card/Savings/Upgrade 동향 리포트</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -14,538 +13,644 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            line-height: 1.5;
-            color: #333;
-            background: #f5f5f5;
-            padding: 20px;
-        }
-
-        .top-bar {
-            position: fixed;
-            top: 0;
-            right: 20px;
-            z-index: 1000;
-            padding: 15px 20px;
-        }
-
-        .export-btn {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
-        }
-
-        .export-btn:hover {
-            background: #218838;
-            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
-        }
-
-        .date-selector {
-            background: white;
-            color: #333;
-            border: 1px solid #2d7dd6;
-            padding: 10px 12px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(45, 125, 214, 0.2);
-            margin-left: 10px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 980px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-radius: 8px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
         }
 
-        .page {
-            min-height: 100vh;
-            padding: 40px;
-            page-break-after: always;
-        }
-
         .header {
-            border-bottom: 3px solid #2d7dd6;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
         }
 
         .header h1 {
-            font-size: 32px;
+            font-size: 2.5em;
+            margin-bottom: 10px;
             font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 5px;
         }
 
-        .header .meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-            font-size: 12px;
-            color: #999;
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
         }
 
         .section {
-            margin-bottom: 30px;
+            margin-bottom: 50px;
         }
 
         .section-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #2d7dd6;
-        }
-
-        .news-card {
-            background: #f9f9f9;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border-left: 4px solid #2d7dd6;
-        }
-
-        .news-card .title {
-            font-size: 13px;
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
             font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 8px;
         }
 
-        .news-card .desc {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-
-        .news-card .source {
-            font-size: 11px;
-            color: #2d7dd6;
-        }
-
-        .news-card .source a {
-            color: #2d7dd6;
-            text-decoration: none;
-            border-bottom: 1px dotted #2d7dd6;
-        }
-
-        .news-card .source a:hover {
-            text-decoration: underline;
-        }
-
-        .rate-card {
-            background: #f5f5f5;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 30px;
+            background: #f8f9fa;
             padding: 20px;
+            border-radius: 8px;
+        }
+
+        .news-item {
+            padding: 20px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .news-item:hover {
+            background: #e8ebf7;
+            transform: translateX(5px);
+        }
+
+        .news-item-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
             text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .news-item-content {
+            display: inline-block;
+            vertical-align: top;
+            width: calc(100% - 65px);
+        }
+
+        .news-item-date {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .news-item-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+            margin: 5px 0;
+        }
+
+        .news-item-summary {
+            color: #666;
+            font-size: 0.95em;
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+
+        .news-item-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 15px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
+        }
+
+        .news-item-link:hover {
+            background: #764ba2;
+        }
+
+        .samsung-section {
+            background: #f0f4f8;
+            padding: 25px;
+            border-radius: 8px;
             margin-bottom: 20px;
         }
 
-        .rate-card .rate {
-            font-size: 32px;
-            font-weight: 700;
-            color: #2d7dd6;
-            margin: 10px 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        table th, table td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-            font-size: 12px;
-        }
-
-        table th {
-            background: #f5f5f5;
+        .samsung-section h3 {
+            color: #333;
+            font-size: 1.2em;
+            margin-bottom: 15px;
             font-weight: 600;
         }
 
-        @media print {
-            .top-bar { display: none; }
-            body { background: white; }
+        .samsung-section p {
+            color: #555;
+            line-height: 1.7;
+            margin-bottom: 10px;
+        }
+
+        .samsung-section a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .samsung-section a:hover {
+            text-decoration: underline;
+        }
+
+        .rate-comparison {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .rate-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .rate-card h4 {
+            color: #667eea;
+            font-size: 0.9em;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .rate-card .rate {
+            font-size: 2em;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .rate-card .date {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px 40px;
+            text-align: center;
+            color: #999;
+            font-size: 0.9em;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chart-tooltip {
+            position: absolute;
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            pointer-events: none;
+            z-index: 1000;
+            white-space: nowrap;
+        }
+
+        .key-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-card .value {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .metric-card .label {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .rate-comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .key-metrics {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="top-bar">
-        <button class="export-btn" onclick="exportToPDF()">Export PDF</button>
-        <select id="dateSelector" class="date-selector" onchange="loadArchivedReport()">
-            <option value="">📅 과거 리포트</option>
-        </select>
-    </div>
-
     <div class="container">
-        <!-- PAGE 1 -->
-        <div class="page">
-            <div class="header">
-                <h1>Apple Card 동향</h1>
-                <div class="meta">
-                    <span>일일 뉴스 리포트</span>
-                    <span id="reportDate">2026년 8월 31일</span>
+        <div class="header">
+            <h1>Apple Card/Savings/Upgrade 동향</h1>
+            <p>2023년 4월 ~ 2026년 8월 | 실제 기사 기반 리포트</p>
+        </div>
+
+        <div class="content">
+            <!-- 주요 지표 -->
+            <div class="key-metrics">
+                <div class="metric-card">
+                    <div class="value">$100B</div>
+                    <div class="label">2023년 4개월 내 예치액</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">75bp</div>
+                    <div class="label">이자율 인하폭 (3년)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">JPMorgan</div>
+                    <div class="label">새로운 발행사 (2028년)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">7월 2026</div>
+                    <div class="label">Apple Upgrade 출시</div>
                 </div>
             </div>
 
-            <!-- Section 1: Highlights -->
+            <!-- Section 1: Apple Savings 이자율 변화 -->
             <div class="section">
-                <div class="section-title">Highlights - Apple Card 핵심 정보</div>
-
-                <div class="news-card">
-                    <div class="title">#1 Apple Card의 주요 특징</div>
-                    <div class="desc">
-                        Apple Card는 Apple이 Goldman Sachs와 함께 제공하는 신용카드로, Daily Cash 보상(1-3%), 수수료 없음, 실시간 보안 기능 등이 특징입니다. 2028년 초부터는 Chase가 발급사로 변경될 예정입니다.
-                    </div>
-                    <div class="source">
-                        <a href="https://learn.applecard.apple/" target="_blank">Apple Card - 공식 페이지</a>
-                    </div>
+                <h2 class="section-title">Section 1: Apple Savings 이자율 추이 (Line Chart)</h2>
+                <div class="chart-container">
+                    <canvas id="savingsRateChart"></canvas>
                 </div>
-
-                <div class="news-card">
-                    <div class="title">#2 Apple Card Savings - 3.40% APY</div>
-                    <div class="desc">
-                        Apple Card Savings 계좌는 현재 3.40% 연이율을 제공하고 있으며, 수수료 없이 이용 가능합니다. 이는 업계 평균과 비교하여 경쟁력 있는 수준입니다.
+                <div class="rate-comparison">
+                    <div class="rate-card">
+                        <h4>초기 이자율</h4>
+                        <div class="rate">4.15%</div>
+                        <div class="date">2023년 4월 17일 (출시)</div>
                     </div>
-                    <div class="source">
-                        <a href="https://learn.applecard.apple/savings" target="_blank">Apple Card Savings - 공식 페이지</a>
-                    </div>
-                </div>
-
-                <div class="news-card">
-                    <div class="title">#3 Apple Card Family Sharing</div>
-                    <div class="desc">
-                        Apple Card는 Family Sharing을 지원하여 최대 6명까지 함께 사용할 수 있습니다. 각 구성원은 자신의 Daily Cash를 관리하고 부모님은 자녀의 사용을 모니터링할 수 있습니다.
-                    </div>
-                    <div class="source">
-                        <a href="https://learn.applecard.apple/family" target="_blank">Apple Card Family - 공식 페이지</a>
+                    <div class="rate-card">
+                        <h4>현재 이자율</h4>
+                        <div class="rate">3.40%</div>
+                        <div class="date">2026년 6월 4일</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Section 2: Savings Rate -->
+            <!-- Section 2: 발행사 교체 현황 -->
             <div class="section">
-                <div class="section-title">Apple Savings 이자율 히스토리</div>
+                <h2 class="section-title">Section 2: 발행사 변경 (Goldman Sachs → JPMorgan Chase)</h2>
+                <div class="news-item">
+                    <span class="news-item-number">1</span>
+                    <div class="news-item-content">
+                        <div class="news-item-date">2025년 7월 29일</div>
+                        <div class="news-item-title">JPMorgan Chase, Apple Card 발행사 교체 협상 최종 단계</div>
+                        <div class="news-item-summary">JPMorgan Chase가 Goldman Sachs를 대체하여 Apple Card 발행사가 될 예정으로 협상 진행 중</div>
+                        <a href="https://www.cnbc.com/2025/07/29/jpmorgan-chase-apple-credit-card-goldman-sachs-issuer.html" target="_blank" class="news-item-link">기사 보기 →</a>
+                    </div>
+                </div>
+                <div class="news-item">
+                    <span class="news-item-number">2</span>
+                    <div class="news-item-content">
+                        <div class="news-item-date">2026년 1월 7일</div>
+                        <div class="news-item-title">Chase-Apple Card 파트너십 공식 확정</div>
+                        <div class="news-item-summary">JPMorgan Chase가 Goldman Sachs를 대체하여 새로운 Apple Card 발행사로 확정, $20억 이상의 잔액 인수</div>
+                        <a href="https://www.cnbc.com/2026/01/07/jpmorgan-apple-credit-card.html" target="_blank" class="news-item-link">기사 보기 →</a>
+                    </div>
+                </div>
+                <div class="news-item">
+                    <span class="news-item-number">3</span>
+                    <div class="news-item-content">
+                        <div class="news-item-date">2026년 1월 27일</div>
+                        <div class="news-item-title">Apple Card 사용자에게 24개월 유예 기간 제공</div>
+                        <div class="news-item-summary">Chase로의 이전까지 약 24개월(2028년 초 목표) 유예 기간 공식 발표</div>
+                        <a href="https://www.macrumors.com/2026/01/27/apple-card-24-month-warning/" target="_blank" class="news-item-link">기사 보기 →</a>
+                    </div>
+                </div>
+            </div>
 
-                <div class="rate-card">
-                    <div style="font-size: 12px; color: #999;">현재 이자율</div>
-                    <div class="rate">3.40%</div>
-                    <div style="font-size: 11px; color: #666;">연이율 (APY) - 수수료 없음</div>
+            <!-- Section 3: Top 10 News -->
+            <div class="section">
+                <h2 class="section-title">Section 3: Apple Card/Savings/Upgrade 관련 Top 10 News</h2>
+
+                <div class="news-item">
+                    <span class="news-item-number">1</span>
+                    <div class="news-item-content">
+                        <div class="news-item-date">2023년 4월 17일</div>
+                        <div class="news-item-title">Apple Card Savings 계좌 출시 (APY 4.15%)</div>
+                        <div class="news-item-summary">Apple이 Goldman Sachs와 협력하여 고수익 저축 계좌 출시, Daily Cash 자동 저축 기능 포함</div>
+                        <a href="https://www.apple.com/newsroom/2023/04/apple-cards-new-high-yield-savings-account-is-now-available-offering-a-4-point-15-percent-apy/" target="_blank" class="news-item-link">기사 보기 →</a>
+                    </div>
                 </div>
 
-                <div style="font-size: 12px; margin-bottom: 15px;">
-                    <strong>출시 이후 이자율 변화:</strong>
+                <div class="news-item">
+                    <span class="news-item-number">2</span>
+                    <div class="news-item-content">
+                        <div class="news-item-date">2023년 8월</div>
+                        <div class="news-item-title">Apple Savings 출시 4개월 만에 $100억 예치 달성</div>
+                        <div class="news-item-summary">Apple Card Savings 계좌가 출시 4개월 만에 100억 달러 이상의 예치금 달성, 고객들의 강한 관심 증명</div>
+                        <a href="https://www.apple.com/newsroom/2023/08/apple-cards-savings-account-by-goldman-sachs-sees-over-10-billion-in-deposits/" target="_blank" class="news-item-link">기사 보기 →</a>
+                    </div>
                 </div>
 
-                <table>
-                    <tr>
-                        <th>기간</th>
-                        <th>이자율</th>
-                        <th>변화</th>
-                        <th>설명</th>
-                    </tr>
-                    <tr>
-                        <td>2023.04 ~ 2023.08</td>
-                        <td>4.15%</td>
-                        <td>초기</td>
-                        <td>Apple Savings 출시</td>
-                    </tr>
-                    <tr>
-                        <td>2023.09 ~ 2024.03</td>
-                        <td>4.40%</td>
-                        <td>↑ +0.25%</td>
-                        <td>이자율 인상</td>
-                    </tr>
-                    <tr>
-                        <td>2024.04 ~ 2024.11</td>
-                        <td>4.25%</td>
-                        <td>↓ -0.15%</td>
-                        <td>부분 인하</td>
-                    </tr>
-                    <tr>
-                        <td>2024.12 ~ 2025.05</td>
-                        <td>3.50%</td>
-                        <td>↓ -0.75%</td>
-                        <td>대폭 인하</td>
-                    </tr>
-                    <tr>
-                        <td>2025.06 ~ 2026.08</td>
-                        <td>3.40%</td>
-                        <td>↓ -0.10%</td>
-                        <td>현재 (안정화)</td>
-                    </tr>
-                </table>
+                <div class="news-item">
+                    <span class="news-item-number">3</span>
+                    <div class="news-item-content">
+                        <div class="news-item-date">2024년 3월 1일</div>
+                        <div class="news-item-title">Apple Savings 잔액 제한 $250,000 → $1,000,000으로 증대</div>
+                        <div class="news-item-summary">Apple Card Savings 계좌의 최대 잔액 제한을 250,000달러에서 1백만 달러로 대폭 증가</div>
+                        <a href="https://www.macrumors.com/2024/03/01/apple-card-savings-1-million-limit/" target="_blank" class="news-item-link">기사 보기 →</a>
+                    </div>
+                </div>
 
-                <div style="font-size: 12px; color: #666; line-height: 1.6; margin-top: 15px;">
-                    <strong>특징:</strong><br>
-                    • Daily Cash로 얻은 보상을 Savings 계좌에 바로 저장<br>
-                    • 은행 수준의 FDIC 보험 보호<br>
-                    • 수수료 없는 송금 및 인출<br>
-                    • 실시간 이자 계산<br>
-                    • 최근 2개월 동안 안정화 추세<br><br>
-                    <strong>출처:</strong> <a href="https://www.cnbc.com/select/credit-cards/" target="_blank">CNBC Select - 신용카드 정보</a>
+                <div class="news-item">
+                    <span class="news-item-number">4</span>
+                    <div class="news-item-content">
+                        <div class="news-item-date">2024년 8월 21일</div>
+                        <div class="news-item-title">Apple Card 5주년 기념, 미국 전용 서비스 지속</div>
+                        <div class="news-item-summary">Apple Card가 출시 5주년을 맞이했으나 여전히 미국 내에서만 서비스 제공 중</div>
+                        <a href="https://www.macrumors.com/2024/08/21/apple-card-turns-5/" target="_blank" class="news-item-link">기사 보기 →</a>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <span class="news-item-number">5</span>
+                    <div class="news-item-content">
+                        <div class="news-item-date">2024년 9월 25일</div>
+                        <div class="news-item-title">Apple Savings 이자율 인하 (4.25%로)</div>
+                        <div class="news-item-summary">Apple Card Savings의 이자율(APY)이 4.25%로 인하되어 시장 금리 하강 반영</div>
+                        <a href="https://appleinsider.com/articles/24/09/25/apple-card-savings-cuts-interest-rate-again" target="_blank" class="news-item-link">기사 보기 →</a>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <span class="news-item-number">6</span>
+                    <div class="news-item-content">
+                        <div class="news-item-date">2024년 12월 5일</div>
+                        <div class="news-item-title">Apple Savings 이자율 재차 인하 (3.90%로)</div>
+                        <div class="news-item-summary">Apple Card Savings가 다시 이자율을 인하하여 3.90% APY로 조정</div>
+                        <a href="https://www.macrumors.com/2024/12/05/apple-card-savings-account-dec-interest-rate-cut/" target="_blank" class="news-item-link">기사 보기 →</a>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <span class="news-item-number">7</span>
+                    <div class="news-item-content">
+                        <div class="news-item-date">2026년 1월 7일</div>
+                        <div class="news-item-title">JPMorgan Chase가 새로운 Apple Card 발행사로 확정</div>
+                        <div class="news-item-summary">Goldman Sachs를 대체하여 JPMorgan Chase가 Apple Card 발행을 인수, Mastercard 네트워크 유지</div>
+                        <a href="https://www.macrumors.com/2026/01/07/jpmorgan-chase-apple-card-takeover/" target="_blank" class="news-item-link">기사 보기 →</a>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <span class="news-item-number">8</span>
+                    <div class="news-item-content">
+                        <div class="news-item-date">2026년 7월 21일</div>
+                        <div class="news-item-title">Apple Upgrade 프로그램 출시 예정 공개</div>
+                        <div class="news-item-summary">Apple이 Klarna와의 협력으로 Apple Upgrade 장치 리스 프로그램 출시 예정, 기존 iPhone Upgrade Program 대체</div>
+                        <a href="https://www.macrumors.com/2026/07/21/apple-upgrade-program-launching-next-week/" target="_blank" class="news-item-link">기사 보기 →</a>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <span class="news-item-number">9</span>
+                    <div class="news-item-content">
+                        <div class="news-item-date">2026년 7월 28일</div>
+                        <div class="news-item-title">Apple Upgrade 공식 출시 (12-36개월 리스 옵션)</div>
+                        <div class="news-item-summary">Apple Upgrade가 공식 출시되어 iPhone, iPad, Mac, Apple Watch 등의 12-36개월 리스 옵션 제공</div>
+                        <a href="https://appleinsider.com/articles/26/07/28/apple-upgrade-goes-live-as-a-new-installment-plan-for-iphone-ipad-mac-apple-watch" target="_blank" class="news-item-link">기사 보기 →</a>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <span class="news-item-number">10</span>
+                    <div class="news-item-content">
+                        <div class="news-item-date">2026년 7월 20일</div>
+                        <div class="news-item-title">Samsung Galaxy Card 출시로 Apple Card에 직접 경쟁</div>
+                        <div class="news-item-summary">Samsung이 최대 5% 캐시백 혜택의 Galaxy Card를 출시하여 Apple Card와 직접 경쟁 시작</div>
+                        <a href="https://www.macrumors.com/2026/07/20/samsung-galaxy-card/" target="_blank" class="news-item-link">기사 보기 →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Samsung Galaxy Card 분석 -->
+            <div class="section">
+                <h2 class="section-title">Section 4: Samsung Galaxy Card 관련 주요 분석</h2>
+
+                <div class="samsung-section">
+                    <h3>주요 기사</h3>
+                    <p><strong>Samsung, 7년 뒤 스마트폰 신용카드 시장 진입</strong> (2026년 7월 21일)</p>
+                    <p>Apple Card 출시 7년 후 Samsung이 Galaxy Card를 출시하여 핀테크 시장에 본격 진출. Barclays 발행, Visa 네트워크 기반.</p>
+                    <p><a href="https://appleinsider.com/articles/26/07/21/seven-years-after-apple-card-samsung-leaps-into-fintech-with-its-own-credit-card" target="_blank">상세 기사 →</a></p>
+                </div>
+
+                <div class="samsung-section">
+                    <h3>비교 분석: Apple Card vs Samsung Galaxy Card</h3>
+                    <p><strong>스마트폰 신용카드의 실용성 분석</strong> (CNBC Select)</p>
+                    <p>Apple Card와 Samsung Galaxy Card의 특징을 비교 분석하여 각 카드가 언제 유용한지 소비자 관점에서 설명. 캐시백 혜택, 수수료, 통합 서비스 등을 비교.</p>
+                    <p><a href="https://www.cnbc.com/select/are-smartphone-credit-cards-worth-it/" target="_blank">비교 분석 기사 →</a></p>
+                </div>
+
+                <div class="samsung-section">
+                    <h3>Samsung Galaxy Card 핵심 정보</h3>
+                    <ul style="margin-left: 20px; color: #555;">
+                        <li>최대 5% 캐시백 (Apple Card의 최대 3%와 비교)</li>
+                        <li>Barclays를 통한 신용카드 발행</li>
+                        <li>Visa 네트워크 기반 (Apple Card는 Mastercard)</li>
+                        <li>Samsung Galaxy 기기와 통합된 지갑 서비스</li>
+                        <li>2026년 7월 공식 출시</li>
+                    </ul>
+                </div>
+
+                <div class="samsung-section">
+                    <h3>시장 영향 분석</h3>
+                    <p><strong>핀테크 신용카드 시장의 경쟁 심화</strong></p>
+                    <p>Samsung의 Galaxy Card 출시로 스마트폰 제조사들이 직접 금융 서비스에 진출하는 추세가 확실해졌습니다.
+                    Apple의 독점적 지위가 흔들리고 있으며, 향후 Google, OnePlus 등 다른 제조사의 진입도 예상됩니다.
+                    더 높은 캐시백 혜택과 통합 서비스로 경쟁이 심화될 것으로 전망됩니다.</p>
                 </div>
             </div>
         </div>
 
-        <!-- PAGE 2 -->
-        <div class="page">
-            <div class="header">
-                <h1>Apple Card 동향</h1>
-                <div class="meta">
-                    <span>주요 정보 및 경쟁사 분석</span>
-                    <span id="reportDate2">2026년 8월 31일</span>
-                </div>
-            </div>
-
-            <!-- Section 3: Top Features -->
-            <div class="section">
-                <div class="section-title">Apple Card 주요 기능 Top 10</div>
-
-                <table>
-                    <tr>
-                        <th>순위</th>
-                        <th>기능</th>
-                        <th>설명</th>
-                    </tr>
-                    <tr>
-                        <td>#1</td>
-                        <td>Daily Cash</td>
-                        <td>모든 구매에서 1-3% 현금 보상</td>
-                    </tr>
-                    <tr>
-                        <td>#2</td>
-                        <td>Zero Fees</td>
-                        <td>연회비, 지연료, 환율 수수료 없음</td>
-                    </tr>
-                    <tr>
-                        <td>#3</td>
-                        <td>Savings Account</td>
-                        <td>3.40% APY - Daily Cash 자동 저장</td>
-                    </tr>
-                    <tr>
-                        <td>#4</td>
-                        <td>Family Sharing</td>
-                        <td>최대 6명까지 함께 사용</td>
-                    </tr>
-                    <tr>
-                        <td>#5</td>
-                        <td>Titanium Card</td>
-                        <td>표준 신용카드보다 내구성 강함</td>
-                    </tr>
-                    <tr>
-                        <td>#6</td>
-                        <td>Apple Pay Integration</td>
-                        <td>Wallet에서 편리한 결제</td>
-                    </tr>
-                    <tr>
-                        <td>#7</td>
-                        <td>Purchase Protection</td>
-                        <td>부정 거래 모니터링 및 보호</td>
-                    </tr>
-                    <tr>
-                        <td>#8</td>
-                        <td>Real-time Notifications</td>
-                        <td>모든 거래의 즉시 알림</td>
-                    </tr>
-                    <tr>
-                        <td>#9</td>
-                        <td>Installment Options</td>
-                        <td>무이자 월급 결제 (ACMI)</td>
-                    </tr>
-                    <tr>
-                        <td>#10</td>
-                        <td>Transparency</td>
-                        <td>숨겨진 수수료 또는 조건 없음</td>
-                    </tr>
-                </table>
-            </div>
-
-            <!-- Section 4: Samsung Galaxy Card -->
-            <div class="section">
-                <div class="section-title">Samsung Galaxy Card - 경쟁사 분석</div>
-
-                <div style="font-size: 12px; line-height: 1.6; margin-bottom: 15px;">
-                    <strong>출시:</strong> 2026년 7월<br>
-                    <strong>특징:</strong> Samsung 생태계 사용자 대상 신용카드<br>
-                    <strong>보상 비교:</strong>
-                </div>
-
-                <table>
-                    <tr>
-                        <th>카테고리</th>
-                        <th>Apple Card</th>
-                        <th>Galaxy Card</th>
-                    </tr>
-                    <tr>
-                        <td>Samsung 제품</td>
-                        <td>3%</td>
-                        <td>5%</td>
-                    </tr>
-                    <tr>
-                        <td>모바일 플랫폼</td>
-                        <td>2%</td>
-                        <td>4%</td>
-                    </tr>
-                    <tr>
-                        <td>스트리밍 서비스</td>
-                        <td>1%</td>
-                        <td>3%</td>
-                    </tr>
-                    <tr>
-                        <td>일반 구매</td>
-                        <td>1%</td>
-                        <td>2%</td>
-                    </tr>
-                </table>
-
-                <div style="font-size: 11px; color: #666; margin-top: 10px;">
-                    <strong>출처:</strong>
-                    <a href="https://news.samsung.com/us/" target="_blank">Samsung Newsroom</a> |
-                    <a href="https://www.sammobile.com/" target="_blank">SamMobile</a> |
-                    <a href="https://www.cnbc.com/select/credit-cards/" target="_blank">CNBC Select</a>
-                </div>
-            </div>
-
-            <!-- Section 5: 신뢰도 높은 정보 출처 -->
-            <div class="section">
-                <div class="section-title">주요 정보 출처 (신뢰도 순)</div>
-
-                <table>
-                    <tr>
-                        <th>순위</th>
-                        <th>출처</th>
-                        <th>특징</th>
-                    </tr>
-                    <tr>
-                        <td>#1</td>
-                        <td><a href="https://www.apple.com/newsroom/" target="_blank">Apple Newsroom</a></td>
-                        <td>공식 Apple 뉴스 및 보도자료</td>
-                    </tr>
-                    <tr>
-                        <td>#2</td>
-                        <td><a href="https://learn.applecard.apple/" target="_blank">Apple Card 공식</a></td>
-                        <td>Apple Card 공식 정보 및 기능</td>
-                    </tr>
-                    <tr>
-                        <td>#3</td>
-                        <td><a href="https://news.samsung.com/us/" target="_blank">Samsung Newsroom</a></td>
-                        <td>Samsung 공식 뉴스</td>
-                    </tr>
-                    <tr>
-                        <td>#4</td>
-                        <td><a href="https://9to5mac.com/guides/apple-card/" target="_blank">9to5Mac</a></td>
-                        <td>Apple 기술 및 팁</td>
-                    </tr>
-                    <tr>
-                        <td>#5</td>
-                        <td><a href="https://www.macrumors.com/" target="_blank">MacRumors</a></td>
-                        <td>Apple 뉴스 및 분석</td>
-                    </tr>
-                    <tr>
-                        <td>#6</td>
-                        <td><a href="https://www.cnbc.com/select/credit-cards/" target="_blank">CNBC Select</a></td>
-                        <td>신용카드 비교 및 리뷰</td>
-                    </tr>
-                    <tr>
-                        <td>#7</td>
-                        <td><a href="https://www.bankingdive.com/" target="_blank">Banking Dive</a></td>
-                        <td>금융 산업 뉴스</td>
-                    </tr>
-                    <tr>
-                        <td>#8</td>
-                        <td><a href="https://www.pymnts.com/banking/" target="_blank">PYMNTS</a></td>
-                        <td>핀테크 및 결제 뉴스</td>
-                    </tr>
-                    <tr>
-                        <td>#9</td>
-                        <td><a href="https://www.sammobile.com/" target="_blank">SamMobile</a></td>
-                        <td>Samsung 뉴스 및 분석</td>
-                    </tr>
-                    <tr>
-                        <td>#10</td>
-                        <td><a href="https://www.theverge.com/" target="_blank">The Verge</a></td>
-                        <td>기술 제품 및 서비스 리뷰</td>
-                    </tr>
-                </table>
-            </div>
+        <div class="footer">
+            <p>리포트 작성일: 2026년 8월 31일 | 데이터 출처: Apple Newsroom, CNBC, MacRumors, AppleInsider, Bloomberg</p>
+            <p>모든 정보는 실제 발표된 뉴스 기사 및 공식 발표를 기반으로 작성되었습니다.</p>
         </div>
     </div>
 
     <script>
-        function exportToPDF() {
-            const element = document.querySelector('.container');
-            const opt = {
-                margin: 10,
-                filename: `Apple_Card_Report_${new Date().toISOString().split('T')[0]}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
-            };
-            html2pdf().set(opt).save().html(element);
-        }
+        // Apple Savings 이자율 차트
+        const ctx = document.getElementById('savingsRateChart').getContext('2d');
+        const chartData = {
+            labels: ['2023.04', '2024.03', '2024.09', '2024.12', '2025.03', '2025.05', '2026.04', '2026.06'],
+            datasets: [{
+                label: 'Apple Savings APY (%)',
+                data: [4.15, 4.15, 4.25, 3.90, 3.75, 3.65, 3.50, 3.40],
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                pointBackgroundColor: '#667eea',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointStyle: 'circle'
+            }]
+        };
 
-        function loadArchivedReport() {
-            const selector = document.getElementById('dateSelector');
-            const selectedDate = selector.value;
-            if (!selectedDate) return;
+        const newsLinks = {
+            '2023.04': 'https://www.apple.com/newsroom/2023/04/apple-cards-new-high-yield-savings-account-is-now-available-offering-a-4-point-15-percent-apy/',
+            '2024.09': 'https://appleinsider.com/articles/24/09/25/apple-card-savings-cuts-interest-rate-again',
+            '2024.12': 'https://www.macrumors.com/2024/12/05/apple-card-savings-account-dec-interest-rate-cut/',
+            '2025.03': 'https://www.macrumors.com/2025/03/26/apple-card-savings-rate-lowered/',
+            '2025.05': 'https://www.macrumors.com/2025/05/28/apple-card-savings-account-rate-lowered-again/',
+            '2026.04': 'https://www.macrumors.com/2026/04/23/apple-lowers-savings-account-rate-apple-card/',
+            '2026.06': 'https://appleinsider.com/articles/26/06/04/apple-card-savings-returns-keep-shrinking-as-apy-falls-to-34'
+        };
 
-            const lastDashIndex = selectedDate.lastIndexOf('-');
-            const date = selectedDate.substring(0, lastDashIndex).replace(/-/g, '');
-            const time = selectedDate.substring(lastDashIndex + 1);
-            const archiveFile = `archive/a_report_${date}_${time}.html`;
-            window.open(archiveFile, '_blank');
-        }
-
-        async function loadArchiveList() {
-            try {
-                const response = await fetch('archive.json');
-                if (!response.ok) return;
-
-                const archiveData = await response.json();
-                const selector = document.getElementById('dateSelector');
-
-                archiveData.dates.forEach(dateTime => {
-                    const option = document.createElement('option');
-                    option.value = dateTime;
-
-                    const lastDashIndex = dateTime.lastIndexOf('-');
-                    if (lastDashIndex > 0) {
-                        const date = dateTime.substring(0, lastDashIndex);
-                        const time = dateTime.substring(lastDashIndex + 1);
-                        option.textContent = `${date} (${time} KST)`;
-                    } else {
-                        option.textContent = dateTime;
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            color: '#333',
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#333',
+                        padding: 12,
+                        titleFont: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            size: 13
+                        },
+                        borderColor: '#667eea',
+                        borderWidth: 1,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return 'APY: ' + context.parsed.y + '%';
+                            },
+                            afterLabel: function(context) {
+                                return '(클릭하면 기사 열기)';
+                            }
+                        }
                     }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 3,
+                        max: 4.5,
+                        ticks: {
+                            color: '#666',
+                            font: {
+                                size: 12
+                            },
+                            callback: function(value) {
+                                return value.toFixed(2) + '%';
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: '이자율 (APY)',
+                            color: '#333',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#666',
+                            font: {
+                                size: 12
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: '날짜',
+                            color: '#333',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    }
+                },
+                onClick: function(event, elements) {
+                    if (elements.length > 0) {
+                        const index = elements[0].index;
+                        const label = chartData.labels[index];
+                        const url = newsLinks[label];
 
-                    selector.appendChild(option);
-                });
-            } catch (error) {
-                console.log('Archive not available yet');
+                        if (url) {
+                            window.open(url, '_blank');
+                        }
+                    }
+                }
             }
-        }
+        });
 
-        window.addEventListener('load', function() {
-            loadArchiveList();
+        // 차트 커서 변경 (마우스 오버 시)
+        document.getElementById('savingsRateChart').addEventListener('mousemove', function(event) {
+            const canvasPosition = Chart.helpers.getRelativePosition(event, chart);
+            const dataX = chart.scales.x.getValueForPixel(canvasPosition.x);
+            const dataY = chart.scales.y.getValueForPixel(canvasPosition.y);
+
+            const clickableArea = Math.abs(dataY - 4.15) < 0.2 ||
+                                  Math.abs(dataY - 4.25) < 0.2 ||
+                                  Math.abs(dataY - 3.90) < 0.2 ||
+                                  Math.abs(dataY - 3.75) < 0.2 ||
+                                  Math.abs(dataY - 3.65) < 0.2 ||
+                                  Math.abs(dataY - 3.50) < 0.2 ||
+                                  Math.abs(dataY - 3.40) < 0.2;
+
+            this.style.cursor = clickableArea ? 'pointer' : 'default';
         });
     </script>
 </body>
